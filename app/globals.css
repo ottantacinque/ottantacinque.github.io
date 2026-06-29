@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* next-themes は class 戦略。.dark を variant に登録 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --surface-2: #f6f6f5;
+  --border: #e5e5e2;
+  --text: #1a1a1a;
+  --muted: #888888;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+}
+
+.dark {
+  --bg: #0d0d0f;
+  --surface: #16161a;
+  --surface-2: #1d1d22;
+  --border: #2a2a30;
+  --text: #ededed;
+  --muted: #8a8a92;
+  --accent: #3b82f6;
+  --accent-bg: #16233f;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-bg: var(--accent-bg);
+  --font-sans: var(--font-inter), var(--font-noto-sans-jp), sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* タグの円が「ウニョウニョ」浮遊するアニメーション */
+@keyframes floaty {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(var(--fx), calc(var(--fy) * -1)) rotate(-2deg);
+  }
+  50% {
+    transform: translate(calc(var(--fx) * -0.7), var(--fy)) rotate(2deg);
+  }
+  75% {
+    transform: translate(calc(var(--fx) * 0.5), calc(var(--fy) * 0.6)) rotate(-1deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+.bubble-floaty {
+  animation: floaty var(--dur) ease-in-out var(--delay) infinite;
+}
+.bubble-floaty:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble-floaty {
+    animation: none;
+  }
+}
+
+/* 詳細パネルの出現アニメーション */
+@keyframes detailIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.detail-in {
+  animation: detailIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
