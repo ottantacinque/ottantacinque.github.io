@@ -50,25 +50,11 @@ export type Item = {
 // 静的アイテム（Input / Products / Awards）※サンプル含む
 // -------------------------------------------------------------
 const inputItems: Item[] = [
-  { id: "in-1", label: "機械学習のエッセンス", weight: 0, category: "input", fields: ["ml"], emoji: "📘", desc: "機械学習の基礎を数式とコードで理解する一冊。" },
-  { id: "in-2", label: "統計的学習の基礎", weight: 0, category: "input", fields: ["ml", "stats"], emoji: "📕", desc: "統計的学習理論を体系的に学ぶ定番テキスト。" },
-  { id: "in-3", label: "Deep Learning", weight: 0, category: "input", fields: ["ml"], emoji: "📗", desc: "深層学習の理論を網羅的に解説する教科書。" },
-  { id: "in-4", label: "Pythonではじめるデータ分析", weight: 0, category: "input", fields: ["data", "ml"], emoji: "🐍", desc: "Python によるデータ分析の実践入門。" },
-  { id: "in-5", label: "達人に学ぶSQL徹底指南書", weight: 0, category: "input", fields: ["data"], emoji: "🗃️", desc: "実務で効く SQL の考え方を身につける。" },
   { id: "in-6", label: "リーダブルコード", weight: 0, category: "input", fields: ["sw"], emoji: "📖", desc: "読みやすいコードを書くための原則集。" },
-  { id: "in-7", label: "Clean Architecture", weight: 0, category: "input", fields: ["sw"], emoji: "🏛️", desc: "変更に強い設計の原則を学ぶ。" },
-  { id: "in-8", label: "ドメイン駆動設計", weight: 0, category: "input", fields: ["sw"], emoji: "🧩", desc: "ドメインモデルを中心に据えた設計手法。" },
-  { id: "in-9", label: "Concrete Mathematics", weight: 0, category: "input", fields: ["math", "stats"], emoji: "🔢", desc: "計算機科学のための離散数学の名著。" },
 ];
 
 const productItems: Item[] = [
-  { id: "pr-1", label: "電力データ分析ダッシュボード", weight: 0, category: "products", fields: ["data", "web"], emoji: "📊", desc: "電力データを可視化・分析するダッシュボード。" },
-  { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["web"], emoji: "✅", desc: "習慣の継続を可視化して支援する Web アプリ。" },
-  { id: "pr-3", label: "レーティングアプリ (Elo)", weight: 0, category: "products", fields: ["web", "stats"], emoji: "♟️", desc: "Elo レーティングで強さを推定するアプリ。" },
-  { id: "pr-4", label: "ポートフォリオサイト", weight: 0, category: "products", fields: ["web"], emoji: "🪪", desc: "この自己紹介サイト（Next.js 製）。" },
-  { id: "pr-5", label: "業務自動化スクリプト", weight: 0, category: "products", fields: ["tools"], emoji: "⚙️", desc: "定型業務を自動化するスクリプト群。" },
-  { id: "pr-6", label: "Slack通知ボット", weight: 0, category: "products", fields: ["tools"], emoji: "🔔", desc: "Slack へ自動で通知するボット。" },
-];
+  { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["web"], emoji: "✅", desc: "習慣の継続を可視化して支援する Web アプリ。" },];
 
 // Awards = Kaggle 実績（手動更新。自動化には Kaggle API トークンが必要）
 const awardItems: Item[] = [
