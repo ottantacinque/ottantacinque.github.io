@@ -2,6 +2,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Hero } from "@/components/Hero";
 import { Career } from "@/components/Career";
 import { Activities } from "@/components/Activities";
+import { Inputs } from "@/components/Inputs";
 import { Footer } from "@/components/Footer";
 import { fetchZennArticles } from "@/lib/zenn";
 import { buildItems, buildSections, buildSubFilters } from "@/lib/activities";
@@ -19,6 +20,7 @@ export default async function Home() {
         <Hero />
         <Career />
         <Activities tops={tops} subFilters={subFilters} />
+        <Inputs />
         <Footer />
       </main>
     </>

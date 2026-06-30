@@ -44,7 +44,8 @@ export type Item = {
 // -------------------------------------------------------------
 // 静的アイテム（Input / Products / Awards）※サンプル含む
 // -------------------------------------------------------------
-const inputItems: Item[] = [
+// Input = 読んだ本・記事（独立セクション「読んだ本・記事 / Inputs」で表示）
+export const inputItems: Item[] = [
   { id: "in-6", label: "リーダブルコード", weight: 0, category: "input", fields: ["others"], emoji: "📖", desc: "読みやすいコードを書くための原則集。" },
 ];
 
@@ -111,9 +112,9 @@ function zennToItems(articles: ZennArticle[]): Item[] {
 // 全アイテムを組み立て
 // -------------------------------------------------------------
 export function buildItems(articles: ZennArticle[]): Item[] {
+  // Input（読んだ本・記事）は別セクションで扱うため活動ボードには含めない
   return [
     ...zennToItems(articles),
-    ...inputItems,
     ...productItems,
     ...awardItems,
   ];
@@ -121,8 +122,9 @@ export function buildItems(articles: ZennArticle[]): Item[] {
 
 // -------------------------------------------------------------
 // セクション構成（左カラムの一覧 / 右カラムのカード用）
-//   Top: Awards / Works(Output+Products) / Input
-//   各 Top の中を Kaggle・Zenn記事・Webアプリ 等のサブに細分化する。
+//   Top: Awards / Works(Output+Products)
+//   各 Top の中を Kaggle・DS/ML 等のサブ（分野タグ）に細分化する。
+//   ※ Input（読んだ本・記事）は別セクションで扱う。
 // -------------------------------------------------------------
 const FIELD_BY_ID = Object.fromEntries(FIELDS.map((f) => [f.id, f]));
 
@@ -130,7 +132,6 @@ export type TopId = "awards" | "works" | "input";
 export const TOPS: { id: TopId; label: string; color: string }[] = [
   { id: "awards", label: "Awards", color: "#ea580c" },
   { id: "works", label: "Works", color: "#2563eb" },
-  { id: "input", label: "Input", color: "#16a34a" },
 ];
 
 export type SubGroup = { id: string; label: string; color: string; items: Item[] };
