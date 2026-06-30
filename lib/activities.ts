@@ -42,13 +42,9 @@ export type Item = {
 };
 
 // -------------------------------------------------------------
-// 静的アイテム（Input / Products / Awards）※サンプル含む
+// 静的アイテム（Products / Awards）
+//   ※ Input（読んだ本・記事）は lib/inputs.ts / Inputs セクションで扱う
 // -------------------------------------------------------------
-// Input = 読んだ本・記事（独立セクション「読んだ本・記事 / Inputs」で表示）
-export const inputItems: Item[] = [
-  { id: "in-6", label: "リーダブルコード", weight: 0, category: "input", fields: ["others"], emoji: "📖", desc: "読みやすいコードを書くための原則集。" },
-];
-
 const productItems: Item[] = [
   { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["others"], url: "https://apps.apple.com/jp/app/keizoku-%E3%83%9F%E3%83%8B%E3%83%9E%E3%83%AB%E7%BF%92%E6%85%A3%E3%83%88%E3%83%A9%E3%83%83%E3%82%AB%E3%83%BC/id6761479586", emoji: "✅", desc: "毎日の習慣の継続を記録・可視化して支援する iOS アプリ。App Store で配信中。" },];
 
