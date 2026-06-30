@@ -32,6 +32,7 @@ export const FIELDS: Field[] = [
   { id: "tools", label: "ツール・効率化", color: "#f59e0b" },
   { id: "sw", label: "ソフトウェア設計", color: "#4f46e5" },
   { id: "web", label: "Webアプリ", color: "#0d9488" },
+  { id: "app", label: "iOSアプリ", color: "#0d9488" },
   { id: "math", label: "数学", color: "#ca8a04" },
 ];
 
@@ -54,7 +55,7 @@ const inputItems: Item[] = [
 ];
 
 const productItems: Item[] = [
-  { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["web"], emoji: "✅", desc: "習慣の継続を可視化して支援する Web アプリ。" },];
+  { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["app"], url: "https://apps.apple.com/jp/app/keizoku-%E3%83%9F%E3%83%8B%E3%83%9E%E3%83%AB%E7%BF%92%E6%85%A3%E3%83%88%E3%83%A9%E3%83%83%E3%82%AB%E3%83%BC/id6761479586", emoji: "✅", desc: "毎日の習慣の継続を記録・可視化して支援する iOS アプリ。App Store で配信中。" },];
 
 // Awards = Kaggle 実績（手動更新。自動化には Kaggle API トークンが必要）
 const awardItems: Item[] = [

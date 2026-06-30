@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Item, TopGroup, SubFilter } from "@/lib/activities";
-import { ExternalIcon } from "./icons";
 
 type Entry = {
   item: Item;
@@ -196,29 +195,27 @@ export function ActivityBoard({
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(${10 - index * 80}%)` }}
             >
-              {entries.map((e, i) => (
-                <div key={e.item.id} className="w-4/5 shrink-0 px-2">
-                  <article
-                    className={`flex flex-col overflow-hidden rounded-xl border bg-surface transition-all duration-500 ${
-                      i === index
-                        ? "border-border opacity-100 shadow-md"
-                        : "border-border/60 opacity-50"
-                    }`}
-                  >
-                  {/* Zenn 風の絵文字バナー（関連ビジュアル） */}
-                  <div
-                    className="flex h-28 items-center justify-center"
-                    style={{
-                      background: `radial-gradient(circle at 50% 40%, ${e.subColor}26, ${e.subColor}0d)`,
-                    }}
-                  >
-                    <span className="text-5xl drop-shadow-sm">
-                      {e.item.emoji ?? "🔖"}
-                    </span>
-                  </div>
+              {entries.map((e, i) => {
+                const cardClass = `flex h-full flex-col overflow-hidden rounded-xl border bg-surface transition-all duration-500 ${
+                  i === index
+                    ? "border-border opacity-100 shadow-md"
+                    : "border-border/60 opacity-50"
+                }`;
+                const inner = (
+                  <>
+                    {/* Zenn 風の絵文字バナー（関連ビジュアル） */}
+                    <div
+                      className="flex h-28 items-center justify-center"
+                      style={{
+                        background: `radial-gradient(circle at 50% 40%, ${e.subColor}26, ${e.subColor}0d)`,
+                      }}
+                    >
+                      <span className="text-5xl drop-shadow-sm">
+                        {e.item.emoji ?? "🔖"}
+                      </span>
+                    </div>
 
-                  <div className="flex min-h-[180px] flex-1 flex-col justify-between p-6">
-                    <div>
+                    <div className="flex min-h-[180px] flex-1 flex-col p-6">
                       <div className="mb-3 flex flex-wrap items-center gap-2">
                         <span
                           className="rounded-md px-2 py-0.5 text-[0.7rem] font-bold text-white"
@@ -245,22 +242,26 @@ export function ActivityBoard({
                         </p>
                       )}
                     </div>
-
-                    {e.item.url && (
+                  </>
+                );
+                return (
+                  <div key={e.item.id} className="w-4/5 shrink-0 px-2">
+                    {e.item.url ? (
                       <a
                         href={e.item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+                        aria-label={`${e.item.label} を開く`}
+                        className={`${cardClass} cursor-pointer hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg`}
                       >
-                        開く
-                        <ExternalIcon size={14} />
+                        {inner}
                       </a>
+                    ) : (
+                      <article className={cardClass}>{inner}</article>
                     )}
                   </div>
-                  </article>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* ナビゲーション */}
