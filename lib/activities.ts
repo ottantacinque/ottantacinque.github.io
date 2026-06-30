@@ -21,19 +21,13 @@ export const CATEGORIES: {
   { id: "awards", label: "Awards", labelJa: "受賞 (Kaggle)", color: "#ea580c" },
 ];
 
-// 分野（タグ）の定義と色
+// 分野（タグ）の定義と色 ※フィルタチップ・カードのタグ表示に使用
 export type Field = { id: string; label: string; color: string };
 export const FIELDS: Field[] = [
-  { id: "kaggle", label: "Kaggle / コンペ", color: "#2563eb" },
-  { id: "ml", label: "機械学習", color: "#7c3aed" },
-  { id: "stats", label: "統計・数理", color: "#0891b2" },
-  { id: "data", label: "データ分析", color: "#16a34a" },
-  { id: "chem", label: "ケモインフォ・化学", color: "#db2777" },
-  { id: "tools", label: "ツール・効率化", color: "#f59e0b" },
-  { id: "sw", label: "ソフトウェア設計", color: "#4f46e5" },
-  { id: "web", label: "Webアプリ", color: "#0d9488" },
-  { id: "app", label: "iOSアプリ", color: "#0d9488" },
-  { id: "math", label: "数学", color: "#ca8a04" },
+  { id: "dsml", label: "DS / ML", color: "#2563eb" },
+  { id: "kaggle", label: "Kaggle", color: "#ea580c" },
+  { id: "mi", label: "Materials Informatics", color: "#db2777" },
+  { id: "others", label: "Others", color: "#64748b" },
 ];
 
 export type Item = {
@@ -51,18 +45,19 @@ export type Item = {
 // 静的アイテム（Input / Products / Awards）※サンプル含む
 // -------------------------------------------------------------
 const inputItems: Item[] = [
-  { id: "in-6", label: "リーダブルコード", weight: 0, category: "input", fields: ["sw"], emoji: "📖", desc: "読みやすいコードを書くための原則集。" },
+  { id: "in-6", label: "リーダブルコード", weight: 0, category: "input", fields: ["others"], emoji: "📖", desc: "読みやすいコードを書くための原則集。" },
 ];
 
 const productItems: Item[] = [
-  { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["app"], url: "https://apps.apple.com/jp/app/keizoku-%E3%83%9F%E3%83%8B%E3%83%9E%E3%83%AB%E7%BF%92%E6%85%A3%E3%83%88%E3%83%A9%E3%83%83%E3%82%AB%E3%83%BC/id6761479586", emoji: "✅", desc: "毎日の習慣の継続を記録・可視化して支援する iOS アプリ。App Store で配信中。" },];
+  { id: "pr-2", label: "習慣トラッカー「keizoku」", weight: 0, category: "products", fields: ["others"], url: "https://apps.apple.com/jp/app/keizoku-%E3%83%9F%E3%83%8B%E3%83%9E%E3%83%AB%E7%BF%92%E6%85%A3%E3%83%88%E3%83%A9%E3%83%83%E3%82%AB%E3%83%BC/id6761479586", emoji: "✅", desc: "毎日の習慣の継続を記録・可視化して支援する iOS アプリ。App Store で配信中。" },];
 
-// Awards = Kaggle 実績（手動更新。自動化には Kaggle API トークンが必要）
+// Awards = Kaggle 実績 + 査読付き論文（手動更新）
 const awardItems: Item[] = [
-  { id: "aw-1", label: "🥇 HMS - Harmful Brain Activity (9th/2767)", weight: 3, category: "awards", fields: ["kaggle", "ml"], url: "https://www.kaggle.com/competitions/hms-harmful-brain-activity-classification", emoji: "🥇", desc: "重篤な患者の発作など有害な脳活動パターンを分類。" },
-  { id: "aw-2", label: "🥇 UM - MCTS Variants (11th/1608)", weight: 3, category: "awards", fields: ["kaggle", "ml"], url: "https://www.kaggle.com/competitions/um-game-playing-strength-of-mcts-variants", emoji: "🥇", desc: "ボードゲームで MCTS のどの変種が優れるかを予測。" },
+  { id: "aw-paper-2018", label: "Nonanuclear Ni(II) Complexes (Dalton Trans., 2018)", weight: 2, category: "awards", fields: ["mi"], url: "https://doi.org/10.1039/C8DT00161H", emoji: "📄", desc: "非対称多座配位子による [1-7-1] 型九核 Ni(II) 錯体の合成と磁気・電気化学的性質。第一著者の査読付き論文（Dalton Trans., 2018, 47, 4036–4039）。" },
+  { id: "aw-1", label: "🥇 HMS - Harmful Brain Activity (9th/2767)", weight: 3, category: "awards", fields: ["kaggle"], url: "https://www.kaggle.com/competitions/hms-harmful-brain-activity-classification", emoji: "🥇", desc: "重篤な患者の発作など有害な脳活動パターンを分類。" },
+  { id: "aw-2", label: "🥇 UM - MCTS Variants (11th/1608)", weight: 3, category: "awards", fields: ["kaggle"], url: "https://www.kaggle.com/competitions/um-game-playing-strength-of-mcts-variants", emoji: "🥇", desc: "ボードゲームで MCTS のどの変種が優れるかを予測。" },
   { id: "aw-3", label: "🥈 Santa 2024 (15th/1514)", weight: 1, category: "awards", fields: ["kaggle"], emoji: "🥈", desc: "単語を並び替えてパープレキシティを最小化する最適化。" },
-  { id: "aw-4", label: "🥈 BirdCLEF+ 2025 (25th/2031)", weight: 1, category: "awards", fields: ["kaggle", "ml"], emoji: "🥈", desc: "音声から鳥・両生類・哺乳類などの種を識別。" },
+  { id: "aw-4", label: "🥈 BirdCLEF+ 2025 (25th/2031)", weight: 1, category: "awards", fields: ["kaggle"], emoji: "🥈", desc: "音声から鳥・両生類・哺乳類などの種を識別。" },
   { id: "aw-5", label: "🥈 NeurIPS - Ariel Data Challenge 2024 (32nd/1151)", weight: 1, category: "awards", fields: ["kaggle"], emoji: "🥈", desc: "宇宙望遠鏡の観測から系外惑星のシグナルを導出。" },
   { id: "aw-6", label: "🥈 Geophysical Waveform Inversion (42nd/1365)", weight: 1, category: "awards", fields: ["kaggle"], emoji: "🥈", desc: "地震波形から地下構造を物理ベースで逆解析。" },
   { id: "aw-7", label: "🥈 Stanford RNA 3D Folding (70th/1516)", weight: 1, category: "awards", fields: ["kaggle"], emoji: "🥈", desc: "RNA の立体構造を予測する未解決問題に挑戦。" },
@@ -82,18 +77,17 @@ export type ZennArticle = {
   published?: string; // ISO 文字列
 };
 
+// タイトルから 4 分類（DS/ML・Kaggle・Materials Informatics・Others）へ振り分け。
+// 上から順に最初にマッチした分類を採用し、いずれも該当しなければ DS/ML。
 const FIELD_RULES: { field: string; test: RegExp }[] = [
-  { field: "kaggle", test: /上位解法|コンペ|kaggle|ISIC|NFL|Santa|CIBMTR|MCTS|UM/i },
-  { field: "chem", test: /化学|化合物|分子|ケミカル|ChemPlot|CIRpy|JSME|高分子|合成|SA ?スコア|構造物性/i },
-  { field: "stats", test: /統計|最尤推定|線形モデル|ヤコビアン|偏相関|数理最適化|尺度|検定/ },
-  { field: "data", test: /データ|前処理|欠損|集計|標準化|可視化|ternary|三角ダイア|エクセル|Markdown|SQL/i },
-  { field: "tools", test: /Alfred|bot|wordpress|環境|Colaboratory|GPU|描画|パイプライン/i },
-  { field: "ml", test: /lightgbm|xgboost|catboost|scikit|pycaret|optuna|shap|深層学習|機械学習|モデル|E資格/i },
+  { field: "kaggle", test: /上位解法|コンペ|kaggle|ISIC|NFL|Santa|CIBMTR|MCTS|UM|メダル/i },
+  { field: "mi", test: /化学|化合物|分子|ケミカル|ChemPlot|CIRpy|JSME|高分子|合成|SA ?スコア|構造物性|マテリアルズ|材料|錯体|MOF|物性|触媒|インフォマティクス/i },
+  { field: "others", test: /Alfred|bot|wordpress|環境構築|Colaboratory|GPU|描画|パイプライン|効率化|ショートカット|ブログ|Mac|エクセル|Excel|Markdown/i },
 ];
 
 function classifyZenn(title: string): string[] {
-  const matched = FIELD_RULES.filter((r) => r.test.test(title)).map((r) => r.field);
-  return matched.length > 0 ? Array.from(new Set(matched)) : ["ml"];
+  for (const r of FIELD_RULES) if (r.test.test(title)) return [r.field];
+  return ["dsml"]; // 既定は DS / ML
 }
 
 function zennToItems(articles: ZennArticle[]): Item[] {
@@ -155,13 +149,10 @@ function topOf(cat: Cat): TopId {
   return "works";
 }
 
-// アイテム → サブ分類（id / ラベル / 色）
+// アイテム → タグ（id / ラベル / 色）。全カテゴリ共通で fields[0] の分野タグを採用。
 function subOf(item: Item): SubFilter {
-  if (item.category === "awards") return { id: "kaggle", label: "Kaggle", color: "#ea580c" };
-  if (item.category === "output") return { id: "zenn", label: "Zenn 記事", color: "#2563eb" };
-  const f = FIELD_BY_ID[item.fields[0]] ?? { id: "other", label: "その他", color: "#64748b" };
-  const prefix = item.category === "products" ? "w" : "i";
-  return { id: `${prefix}-${f.id}`, label: f.label, color: f.color };
+  const f = FIELD_BY_ID[item.fields[0]] ?? { id: "others", label: "Others", color: "#64748b" };
+  return { id: f.id, label: f.label, color: f.color };
 }
 
 export function buildSections(items: Item[]): TopGroup[] {
@@ -187,5 +178,9 @@ export function buildSubFilters(tops: TopGroup[]): SubFilter[] {
   for (const t of tops)
     for (const s of t.subs)
       if (!m.has(s.id)) m.set(s.id, { id: s.id, label: s.label, color: s.color });
-  return [...m.values()];
+  // FIELDS の定義順（DS/ML → Kaggle → Materials Informatics → Others）に並べる
+  const order = FIELDS.map((f) => f.id);
+  return [...m.values()].sort(
+    (a, b) => order.indexOf(a.id) - order.indexOf(b.id),
+  );
 }

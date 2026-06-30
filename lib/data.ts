@@ -54,7 +54,7 @@ export const career: CareerItem[] = [
     role: "修士 / 博士課程",
     period: "2013年 〜 2018年",
     kind: "edu",
-    desc: "多核クラスター錯体、金属有機構造体（MOF）の研究。",
+    desc: "多核クラスター錯体、金属有機構造体（MOF）の研究。非対称多座配位子による [1-7-1] 型九核 Ni(II) 錯体の合成と磁気・電気化学的性質に関する研究成果を、第一著者として Dalton Transactions（2018）に発表。",
   },
   {
     org: "琉球大学",
