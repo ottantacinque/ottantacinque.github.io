@@ -57,11 +57,26 @@ export function Inputs({ books, tags }: { books: Book[]; tags: InputTag[] }) {
       )}
 
       <ul className="grid gap-4 sm:grid-cols-2">
-        {shown.map((book) => (
+        {shown.map((book) => {
+          // カード全体のクリック先（Amazon 優先、無ければ先頭ストア）
+          const primary =
+            book.stores.find((s) => s.name === "amazon") ?? book.stores[0];
+          return (
           <li
             key={book.id}
-            className="flex gap-4 rounded-xl border border-border bg-surface p-4 shadow-sm transition-colors hover:border-accent/40"
+            className="relative flex gap-4 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
           >
+            {/* カード全体を覆う Amazon リンク（stretched link） */}
+            {primary && (
+              <a
+                href={primary.url}
+                target="_blank"
+                rel="nofollow sponsored noopener noreferrer"
+                aria-label={`${book.title} を ${primary.label} で見る`}
+                className="absolute inset-0 z-0 rounded-xl"
+              />
+            )}
+
             {book.cover && (
               // 表紙画像（外部ホスト直リンクのため next/image ではなく img を使用）
               // eslint-disable-next-line @next/next/no-img-element
@@ -94,7 +109,8 @@ export function Inputs({ books, tags }: { books: Book[]; tags: InputTag[] }) {
                 </p>
               )}
 
-              <div className="mt-auto flex flex-wrap gap-2 pt-3">
+              {/* ストアボタンは overlay より前面（z-10）で個別に動作 */}
+              <div className="relative z-10 mt-auto flex w-fit flex-wrap gap-2 pt-3">
                 {book.stores.map((s) => (
                   <a
                     key={s.name}
@@ -110,7 +126,8 @@ export function Inputs({ books, tags }: { books: Book[]; tags: InputTag[] }) {
               </div>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </section>
   );
