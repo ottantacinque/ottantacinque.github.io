@@ -1,29 +1,50 @@
 // =============================================================
-// 読んだ本・記事（Inputs セクション用データ）
-//   もしもアフィリエイト「かんたんリンク」の各値から
-//   ストアごとのトラッキング URL を組み立てて利用する。
+// 読んだ本・記事（Inputs セクション）
+//   content/inputs.md に貼り付けられた もしもアフィリエイト
+//  「かんたんリンク」HTML をビルド時にパースしてカード化する。
+//   ※ fs を使うためサーバー側（ビルド時）でのみ評価すること。
 // =============================================================
+import fs from "node:fs";
+import path from "node:path";
 
-export type StoreName = "amazon" | "rakuten" | "yahoo";
-
-export type Store = {
-  name: StoreName;
+export type BookStore = {
+  name: string;
   label: string;
   color: string;
   url: string;
 };
 
-export type BookInput = {
+export type InputTag = { label: string; color: string };
+
+export type Book = {
   id: string;
   title: string;
   publisher?: string;
   cover?: string; // 表紙画像 URL
   note?: string; // 一言コメント（任意）
-  stores: Store[];
+  tag: InputTag;
+  stores: BookStore[];
 };
 
+// タグ名 → 色（活動パートと調和する配色。未定義は slate）
+const TAG_COLORS: Record<string, string> = {
+  "DS/ML": "#2563eb",
+  "DS / ML": "#2563eb",
+  Kaggle: "#ea580c",
+  "Materials Informatics": "#db2777",
+  ソフトウェア設計: "#4f46e5",
+  数学: "#ca8a04",
+  統計: "#0891b2",
+  ビジネス: "#16a34a",
+  Others: "#64748b",
+  その他: "#64748b",
+};
+
+function tagColor(label: string): string {
+  return TAG_COLORS[label] ?? "#64748b";
+}
+
 // もしもアフィリエイトのクリック計測 URL を組み立てる
-// （かんたんリンクの b_l[] に含まれる各 ID と遷移先 URL から生成）
 function moshimo(
   a_id: number,
   p_id: number,
@@ -34,45 +55,118 @@ function moshimo(
   return `https://af.moshimo.com/af/c/click?a_id=${a_id}&p_id=${p_id}&pc_id=${pc_id}&pl_id=${pl_id}&url=${encodeURIComponent(url)}`;
 }
 
-export const bookInputs: BookInput[] = [
-  {
-    id: "readable-code",
-    title:
-      "リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック",
-    publisher: "オライリージャパン",
-    cover: "https://m.media-amazon.com/images/I/51xHT9ZnmNL._SL500_.jpg",
-    note: "読みやすいコードを書くための原則集。",
-    stores: [
-      {
-        name: "amazon",
-        label: "Amazon",
-        color: "#f79256",
-        url: moshimo(2383126, 170, 185, 27060, "https://www.amazon.co.jp/dp/4873115655"),
-      },
-      {
-        name: "rakuten",
-        label: "楽天",
-        color: "#f76956",
-        url: moshimo(
-          2383122,
-          54,
-          54,
-          27059,
-          "https://search.rakuten.co.jp/search/mall/%E3%83%AA%E3%83%BC%E3%83%80%E3%83%96%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%89%20%E2%80%95%E3%82%88%E3%82%8A%E8%89%AF%E3%81%84%E3%82%B3%E3%83%BC%E3%83%89%E3%82%92%E6%9B%B8%E3%81%8F%E3%81%9F%E3%82%81%E3%81%AE%E3%82%B7%E3%83%B3%E3%83%97%E3%83%AB%E3%81%A7%E5%AE%9F%E8%B7%B5%E7%9A%84%E3%81%AA%E3%83%86%E3%82%AF%E3%83%8B%E3%83%83%E3%82%AF%20(Theory%20in%20practice)/",
-        ),
-      },
-      {
-        name: "yahoo",
-        label: "Yahoo!",
-        color: "#66a7ff",
-        url: moshimo(
-          2383127,
-          1225,
-          1925,
-          27061,
-          "https://shopping.yahoo.co.jp/search?first=1&p=%E3%83%AA%E3%83%BC%E3%83%80%E3%83%96%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%89%20%E2%80%95%E3%82%88%E3%82%8A%E8%89%AF%E3%81%84%E3%82%B3%E3%83%BC%E3%83%89%E3%82%92%E6%9B%B8%E3%81%8F%E3%81%9F%E3%82%81%E3%81%AE%E3%82%B7%E3%83%B3%E3%83%97%E3%83%AB%E3%81%A7%E5%AE%9F%E8%B7%B5%E7%9A%84%E3%81%AA%E3%83%86%E3%82%AF%E3%83%8B%E3%83%83%E3%82%AF%20(Theory%20in%20practice)",
-        ),
-      },
-    ],
-  },
-];
+// かんたんリンク msmaflink({...}) の JSON 形
+type MoshimoLink = {
+  u_tx: string;
+  u_bc: string;
+  u_url: string;
+  a_id: number;
+  p_id: number;
+  pl_id: number;
+  pc_id: number;
+  s_n: string;
+  u_so: number;
+};
+type MoshimoData = {
+  n: string;
+  b?: string;
+  d?: string;
+  c_p?: string;
+  p?: string[];
+  eid?: string;
+  b_l?: MoshimoLink[];
+};
+
+const STORE_LABEL: Record<string, string> = {
+  amazon: "Amazon",
+  rakuten: "楽天",
+  yahoo: "Yahoo!",
+};
+
+function buildCover(d: MoshimoData): string | undefined {
+  const p0 = d.p?.[0];
+  if (!p0) return undefined;
+  if (/^https?:\/\//.test(p0)) return p0;
+  return `${d.d ?? ""}${d.c_p ?? ""}${p0}`;
+}
+
+function toBook(
+  d: MoshimoData,
+  tagLabel: string,
+  note: string | undefined,
+  idx: number,
+): Book {
+  const stores: BookStore[] = (d.b_l ?? [])
+    .slice()
+    .sort((a, b) => a.u_so - b.u_so)
+    .map((s) => ({
+      name: s.s_n,
+      label: STORE_LABEL[s.s_n] ?? s.u_tx,
+      color: s.u_bc,
+      url: moshimo(s.a_id, s.p_id, s.pc_id, s.pl_id, s.u_url),
+    }));
+
+  return {
+    id: d.eid ? `book-${d.eid}` : `book-${idx}`,
+    title: d.n,
+    publisher: d.b || undefined,
+    cover: buildCover(d),
+    note: note || undefined,
+    tag: { label: tagLabel, color: tagColor(tagLabel) },
+    stores,
+  };
+}
+
+// 直前のセグメントから @key: の最後の指定を取り出す
+function lastDirective(segment: string, key: string): string | undefined {
+  const re = new RegExp(`@${key}:\\s*(.+)`, "gi");
+  let last: string | undefined;
+  for (const m of segment.matchAll(re)) last = m[1].trim();
+  return last && last.length > 0 ? last : undefined;
+}
+
+let cache: Book[] | null = null;
+
+export function readBooks(): Book[] {
+  if (cache) return cache;
+
+  let text = "";
+  try {
+    text = fs.readFileSync(
+      path.join(process.cwd(), "content/inputs.md"),
+      "utf8",
+    );
+  } catch {
+    return (cache = []);
+  }
+
+  const re = /msmaflink\(\s*(\{[\s\S]*?\})\s*\)\s*;/g;
+  const books: Book[] = [];
+  let prevEnd = 0;
+  let idx = 0;
+
+  for (const m of text.matchAll(re)) {
+    const start = m.index ?? 0;
+    const segment = text.slice(prevEnd, start);
+    prevEnd = start + m[0].length;
+
+    let data: MoshimoData;
+    try {
+      data = JSON.parse(m[1]) as MoshimoData;
+    } catch {
+      continue;
+    }
+    const tagLabel = lastDirective(segment, "tag") ?? "Others";
+    const note = lastDirective(segment, "note");
+    books.push(toBook(data, tagLabel, note, idx++));
+  }
+
+  return (cache = books);
+}
+
+// フィルタチップ用：登場順にユニークなタグを列挙
+export function buildInputTags(books: Book[]): InputTag[] {
+  const m = new Map<string, InputTag>();
+  for (const b of books) if (!m.has(b.tag.label)) m.set(b.tag.label, b.tag);
+  return [...m.values()];
+}

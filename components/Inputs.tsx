@@ -1,12 +1,19 @@
-import { bookInputs } from "@/lib/inputs";
+"use client";
+
+import { useState } from "react";
+import type { Book, InputTag } from "@/lib/inputs";
 import { SectionHeading } from "./SectionHeading";
 
-export function Inputs() {
-  if (bookInputs.length === 0) return null;
+export function Inputs({ books, tags }: { books: Book[]; tags: InputTag[] }) {
+  const [active, setActive] = useState<string | null>(null);
+
+  if (books.length === 0) return null;
+
+  const shown = active ? books.filter((b) => b.tag.label === active) : books;
 
   return (
     <section id="inputs" className="scroll-mt-20 border-t border-border py-14">
-      <div className="mb-7 flex items-center justify-between gap-3">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <SectionHeading>読んだ本・記事 / Inputs</SectionHeading>
         {/* ステマ規制（景品表示法）対応のアフィリエイト表記 */}
         <span className="shrink-0 rounded-md bg-surface-2 px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wider text-muted">
@@ -14,8 +21,43 @@ export function Inputs() {
         </span>
       </div>
 
+      {/* タグによる絞り込み（活動パートと同様） */}
+      {tags.length > 1 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActive(null)}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              active === null
+                ? "border-accent bg-accent text-white"
+                : "border-border text-muted hover:text-text"
+            }`}
+          >
+            すべて
+          </button>
+          {tags.map((t) => {
+            const on = active === t.label;
+            return (
+              <button
+                key={t.label}
+                type="button"
+                onClick={() => setActive(on ? null : t.label)}
+                className="rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+                style={{
+                  borderColor: t.color,
+                  background: on ? t.color : "transparent",
+                  color: on ? "#fff" : t.color,
+                }}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <ul className="grid gap-4 sm:grid-cols-2">
-        {bookInputs.map((book) => (
+        {shown.map((book) => (
           <li
             key={book.id}
             className="flex gap-4 rounded-xl border border-border bg-surface p-4 shadow-sm transition-colors hover:border-accent/40"
@@ -32,6 +74,14 @@ export function Inputs() {
             )}
 
             <div className="flex min-w-0 flex-1 flex-col">
+              <div className="mb-1.5">
+                <span
+                  className="rounded-md px-2 py-0.5 text-[0.68rem] font-bold"
+                  style={{ background: `${book.tag.color}1a`, color: book.tag.color }}
+                >
+                  {book.tag.label}
+                </span>
+              </div>
               <h3 className="line-clamp-2 text-[0.95rem] font-bold leading-snug">
                 {book.title}
               </h3>
