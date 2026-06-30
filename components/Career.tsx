@@ -50,6 +50,16 @@ export function Career() {
               <p className="text-[0.9rem] leading-7 text-text/80 transition-colors group-hover:text-text">
                 {item.desc}
               </p>
+              {item.paper && (
+                <a
+                  href={item.paper.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 block text-[0.82rem] leading-6 text-accent hover:underline"
+                >
+                  {item.paper.title}
+                </a>
+              )}
             </div>
           </li>
         ))}
