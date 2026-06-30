@@ -120,7 +120,7 @@ export function ActivityBoard({
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         {/* 左：一覧 */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {viewTops.map((t) => (
             <div key={t.id}>
               <h3 className="mb-3 flex items-center gap-2 text-sm font-bold">
@@ -190,7 +190,7 @@ export function ActivityBoard({
         </div>
 
         {/* 右：カードを1件ずつ自動表示 */}
-        <div>
+        <div className="min-w-0">
           <div className="relative overflow-hidden py-2">
             <div
               className="flex transition-transform duration-500 ease-out"
