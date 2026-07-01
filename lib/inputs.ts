@@ -21,7 +21,7 @@ export type Book = {
   title: string;
   publisher?: string;
   cover?: string; // 表紙画像 URL
-  note?: string; // 一言コメント（任意）
+  year: number; // 読んだ年（ファイル名 inputs_YYYY.md 由来）
   tag: InputTag;
   stores: BookStore[];
 };
@@ -93,7 +93,7 @@ function buildCover(d: MoshimoData): string | undefined {
 function toBook(
   d: MoshimoData,
   tagLabel: string,
-  note: string | undefined,
+  year: number,
   idx: number,
 ): Book {
   const stores: BookStore[] = (d.b_l ?? [])
@@ -107,11 +107,11 @@ function toBook(
     }));
 
   return {
-    id: d.eid ? `book-${d.eid}` : `book-${idx}`,
+    id: d.eid ? `book-${year}-${d.eid}` : `book-${year}-${idx}`,
     title: d.n,
     publisher: d.b || undefined,
     cover: buildCover(d),
-    note: note || undefined,
+    year,
     tag: { label: tagLabel, color: tagColor(tagLabel) },
     stores,
   };
@@ -125,25 +125,12 @@ function lastDirective(segment: string, key: string): string | undefined {
   return last && last.length > 0 ? last : undefined;
 }
 
-let cache: Book[] | null = null;
-
-export function readBooks(): Book[] {
-  if (cache) return cache;
-
-  let text = "";
-  try {
-    text = fs.readFileSync(
-      path.join(process.cwd(), "content/inputs.md"),
-      "utf8",
-    );
-  } catch {
-    return (cache = []);
-  }
-
+// 1ファイル分（ある年）の Markdown をパースして本の配列にする
+function parseFile(text: string, year: number, startIdx: number): Book[] {
   const re = /msmaflink\(\s*(\{[\s\S]*?\})\s*\)\s*;/g;
   const books: Book[] = [];
   let prevEnd = 0;
-  let idx = 0;
+  let idx = startIdx;
 
   for (const m of text.matchAll(re)) {
     const start = m.index ?? 0;
@@ -157,8 +144,37 @@ export function readBooks(): Book[] {
       continue;
     }
     const tagLabel = lastDirective(segment, "tag") ?? "Others";
-    const note = lastDirective(segment, "note");
-    books.push(toBook(data, tagLabel, note, idx++));
+    books.push(toBook(data, tagLabel, year, idx++));
+  }
+  return books;
+}
+
+let cache: Book[] | null = null;
+
+export function readBooks(): Book[] {
+  if (cache) return cache;
+
+  const dir = path.join(process.cwd(), "content");
+  let files: string[] = [];
+  try {
+    files = fs.readdirSync(dir);
+  } catch {
+    return (cache = []);
+  }
+
+  // content/inputs_YYYY.md を年の新しい順に読む
+  const yearFiles = files
+    .map((f) => {
+      const m = f.match(/^inputs_(\d{4})\.md$/);
+      return m ? { file: f, year: Number(m[1]) } : null;
+    })
+    .filter((x): x is { file: string; year: number } => x !== null)
+    .sort((a, b) => b.year - a.year);
+
+  const books: Book[] = [];
+  for (const { file, year } of yearFiles) {
+    const text = fs.readFileSync(path.join(dir, file), "utf8");
+    books.push(...parseFile(text, year, books.length));
   }
 
   return (cache = books);
@@ -169,4 +185,9 @@ export function buildInputTags(books: Book[]): InputTag[] {
   const m = new Map<string, InputTag>();
   for (const b of books) if (!m.has(b.tag.label)) m.set(b.tag.label, b.tag);
   return [...m.values()];
+}
+
+// フィルタチップ用：読んだ年を新しい順に列挙
+export function buildInputYears(books: Book[]): number[] {
+  return [...new Set(books.map((b) => b.year))].sort((a, b) => b - a);
 }
